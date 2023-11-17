@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: angular
+  template:
+    metadata:
+      labels:
+        app: angular
+        env: prod
+        tier: frontend
+    spec:
+      containers:
+      - name: angularimage
+        image: halimzaki/angular:2.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: angular
+spec:
+  type: ClusterIP
+  selector:
+    app: angular
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: angular-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: angular
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
